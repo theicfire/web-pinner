@@ -16,15 +16,14 @@
     "128": "images/cc128.png"
   },
   "permissions": [
-    "storage",
-    "declarativeContent"
+    "storage"
   ],
   "manifest_version": 2,
 
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "mac": "Shift+Alt+Z"
+        "mac": "Alt+Shift+Z"
       }
     }
   },
