@@ -1,38 +1,17 @@
 {
-  "name": "Constant Context",
-  "description" : "Highlights elements with keywords on developer.chrome",
+  "name": "Clone of Inbox When Ready",
+  "description" : "Hide gmail",
   "version": "1.0",
-  "browser_action": {
-    "default_icon": {
-      "16": "images/cc16.png",
-      "32": "images/cc32.png"
-      },
-    "default_popup": "popup.html"
-  },
-  "icons": {
-    "16": "images/cc16.png",
-    "48": "images/cc48.png",
-    "32": "images/cc32.png",
-    "128": "images/cc128.png"
-  },
-  "permissions": [
-    "storage"
-  ],
   "manifest_version": 2,
 
-  "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "mac": "Alt+Shift+Z"
-      }
-    }
-  },
   "content_scripts": [
     {
       "all_frames": true,
       "js": ["content_script.js"],
-      "matches": ["*://*/*"],
-      "run_at": "document_idle"
+      "css": ["main.css"],
+      "matches": ["https://mail.google.com/mail/*"],
+      "exclude_matches": ["https://mail.google.com/mail/u/0/?ui=2*"],
+      "run_at": "document_end"
     }
   ]
 }

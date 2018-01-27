@@ -1,41 +1,67 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
 
-function savePage(url, description) {
-  chrome.storage.local.get(['urls'], function(object) {
-    let urls = object.urls || {};
-    urls[url] = description;
-    chrome.storage.local.set({urls: urls});
-  })
+function set_inbox_visible(vis) {
+    let gmail_container = document.querySelector('.aeF');
+    if (vis) {
+      gmail_container.style.display = 'block';
+      document.querySelector('.G-tF').style.visibility = 'visible';
+      button.changeText('Hide Inbox');
+    } else {
+      gmail_container.style.display = 'none';
+      document.querySelector('.G-tF').style.visibility = 'hidden';
+      button.changeText('Show Inbox');
+    }
 }
 
-let D_KEY = 68;
-document.body.addEventListener('keydown', (e) => {
-    if (e.keyCode == D_KEY && e.shiftKey && e.altKey) {
-      let description = prompt(document.location.href, document.title);
-      if (description) {
-        savePage(document.location.href, description);
-      }
-    }
-  }
-);
+function hide_if_inbox() {
+  set_inbox_visible(is_visible || document.location.href !== 'https://mail.google.com/mail/u/0/#inbox');
+}
 
-document.body.addEventListener('click', (e) => {
-  if (e.shiftKey && e.altKey) {
-    e.preventDefault();
-    e.stopPropagation();
-    let a_element = e.target.closest('a');
-    let description = prompt(a_element.href, a_element.innerHTML);
-    if (description) {
-      savePage(a_element.href, description);
-    }
-    // TODO send this to the popup
-    // TODO open popup (don't think I can for chrome.. but I could make some other popup thing.. like bearings..)
-  } else if (e.metaKey && e.altKey) {
-    e.preventDefault();
-    e.stopPropagation();
-    let a_element = e.target.closest('a');
-    savePage(a_element.href, a_element.innerHTML);
+class ToggleInboxButton {
+  constructor() {
+    let wrapper = document.createElement('div');
+    wrapper.style.display = 'inline-block';
+    wrapper.style.position = 'relative';
+    wrapper.style.zIndex = '4';
+    wrapper.style.float = 'left';
+
+    let button_wrapper = document.createElement('div');
+    button_wrapper.className = 'G-Ni J-J5-Ji';
+
+    let button = document.createElement('div');
+    button.className = 'T-I J-J5-Ji T-I-ax7';
+    button.role = 'button';
+    button.tabindex = '0';
+    button.style['-webkit-user-select'] = 'none';
+    button.innerHTML = 'Show Inbox';
+    button.id = 'show_inbox';
+
+    wrapper.appendChild(button_wrapper);
+    button_wrapper.appendChild(button);
+    this.wrapper = wrapper;
+    this.button = button;
   }
-}, true);
+
+  changeText(text) {
+    this.button.innerHTML = text;
+  }
+}
+
+let is_visible = false;
+let button = new ToggleInboxButton();
+
+button.button.addEventListener('click', (e) => {
+    is_visible = !is_visible;
+    set_inbox_visible(is_visible);
+});
+
+window.addEventListener('hashchange', function() {
+    hide_if_inbox();
+});
+
+let interval = setInterval(() => {
+  let gmail_container = document.querySelector('.aeF');
+  if (document.querySelector('.G-tF')) {
+    clearInterval(interval);
+    document.getElementById(':5').prepend(button.wrapper);
+  }
+}, 100);
